@@ -35,7 +35,7 @@ data <- data %>%
     lot_sqft, price_per_sqft, latitude, longitude, stories, hoa_fee, parking_garage
   )
 
-# Replace NA values with 0 for 'hoa_fee'
+# Replace hoa_fee null values with 0
 data <- data %>%
   mutate(hoa_fee = ifelse(is.na(hoa_fee), 0, hoa_fee))
 
@@ -59,7 +59,7 @@ house_workflow <- workflow() %>%
   add_model(house_spec) %>%
   fit(data = train_data)
 
-# Prepare the recipe (No need for normalization)
+# Prepare the recipe 
 prepared_recipe <- house_recipe %>%
   prep()
 
@@ -74,16 +74,16 @@ predictions <- predict(house_workflow, new_data = test_data_processed)
 results <- test_data %>%
   bind_cols(predictions)
 
-# Calculate residuals (errors)
+# Calculate residuals and differences
 results <- results %>%
   mutate(residual = abs(sold_price - .pred), difference = sold_price - .pred)
 
-# Find the biggest outlier
+# Find the biggest outlier and add back some original data for identification
 biggest_outliers <- results %>%
   arrange(desc(residual)) %>%
   slice_head(n = 10) %>% left_join(unfiltereddata)
 
-print("Biggest Outliers:")
+#Make a table of the biggest outliers for manual review
 view(biggest_outliers)
 
 # Calculate evaluation metrics
@@ -101,7 +101,7 @@ print(head(predictions))
 # Check the test data
 print(head(test_data_processed))
 
-# Visualization
+# Visualization of prediction vs sold_price
 ggplot(results, aes(x = .pred, y = sold_price)) +
   geom_point(color = "blue") +
   labs(x = "Predicted Price", y = "Sold Price") +
