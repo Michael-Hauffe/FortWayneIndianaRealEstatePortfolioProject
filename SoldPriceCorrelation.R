@@ -27,3 +27,37 @@ ggplot(correlation_df, aes(x = variable, y = correlation)) +
   labs(title = "Correlation of Variables with Sold Price",
        x = "Variable", y = "Correlation") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+data_fullbaths <- data %>% filter(!is.na(full_baths)) %>% select(full_baths)
+print(paste("for every 1 full bath added to a property, the sold_price is expected to increase by",sd(clean_data$sold_price)*correlation_df$correlation["full_baths"]/sd(data_fullbaths$full_baths),"dollars"))
+
+# Calculate percent discount
+data <- data %>%
+  mutate(percent_discount = 100 * (sold_price - list_price) / list_price)
+
+# Mean percent discount
+mean_percent_discount <- mean(data$percent_discount, na.rm = TRUE)
+
+# Standard deviation
+sd_percent_discount <- sd(data$percent_discount, na.rm = TRUE)
+
+# Sample size
+n <- sum(!is.na(data$percent_discount))
+
+# Critical t value
+t_value <- qt(0.975, df = n - 1)
+
+# Margin of error
+margin_of_error <- t_value * (sd_percent_discount / sqrt(n))
+
+# Confidence interval
+lower_bound <- mean_percent_discount - margin_of_error
+upper_bound <- mean_percent_discount + margin_of_error
+
+# Output the confidence interval
+ci <- tibble(
+  lower_bound = lower_bound,
+  mean = mean_percent_discount,
+  upper_bound = upper_bound
+)
+print(ci)
