@@ -8,9 +8,15 @@ library(ggplot2)
 # Read the data
 data <- read_csv("FortWayneRealEstate.csv", col_names = TRUE)
 
-# Remove rows with missing sold_price
-data <- data %>% filter(!is.na(sold_price), !is.na(list_price))
-
+# Filter and clean data
+data <- data %>%
+  mutate(list_date = mdy(list_date)) %>%
+  filter(
+    style == 'SINGLE_FAMILY',
+    year(list_date) %in% c(2022:2024),
+    !is.na(sold_price), 
+    !is.na(list_price)
+    )
 # Split the data into training and testing sets
 split <- initial_split(data, prop = 0.8)
 

@@ -14,8 +14,10 @@ data <- read_csv("FortWayneRealEstate.csv", col_names = TRUE)
 unfiltereddata <- data
 # Filter and clean data
 data <- data %>%
+  mutate(list_date = mdy(list_date)) %>%
   filter(
     style == 'SINGLE_FAMILY',
+    year(list_date) %in% c(2022:2024),
     list_price < 300000,
     !is.na(sqft),
     !is.na(latitude),
