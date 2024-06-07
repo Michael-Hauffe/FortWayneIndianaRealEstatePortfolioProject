@@ -55,7 +55,7 @@ print(paste("R-squared:", rsquared))
 # Check the predictions
 print(head(predictions))
 
-# Check the test data
+# Check the test data 
 print(head(test_data_processed))
 
 # Visualization
