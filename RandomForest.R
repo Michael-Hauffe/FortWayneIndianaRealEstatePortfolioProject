@@ -1,7 +1,4 @@
-library(rvest)
 library(tibble)
-library(httr)
-library(purrr)
 library(dplyr)
 library(readr)
 library(lubridate)
