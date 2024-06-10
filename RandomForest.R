@@ -3,21 +3,23 @@ library(dplyr)
 library(readr)
 library(lubridate)
 library(tidymodels)
-library(randomForest)  # Load the randomForest library
+library(randomForest)
 library(ggplot2)
 library(ranger)
 
 options(width = 120)
 
 # Read the data
+#I would like to add data about crime rate, school rankings, subjective niceness of the property, and more
 data <- read_csv("FortWayneRealEstate.csv", col_names = TRUE)
+data$zip_code <- as.factor(data$zip_code) #Changing zip_code to a factor
 unfiltereddata <- data
 # Filter and clean data
 data <- data %>%
   mutate(list_date = mdy(list_date)) %>%
   filter(
     style == 'SINGLE_FAMILY',
-    year(list_date) %in% c(2022:2024),
+    year(list_date) %in% c(2020:2024),
     list_price < 300000,
     !is.na(sqft),
     !is.na(latitude),
@@ -31,7 +33,7 @@ data <- data %>%
   ) %>%
   select(
     sqft, zip_code, beds, full_baths, half_baths, year_built, sold_price,
-    lot_sqft, price_per_sqft, latitude, longitude, stories, hoa_fee, parking_garage
+    lot_sqft, latitude, longitude, stories, hoa_fee, parking_garage
   )
 
 # Replace hoa_fee null values with 0
@@ -105,3 +107,37 @@ ggplot(results, aes(x = .pred, y = sold_price)) +
   geom_point(color = "blue") +
   labs(x = "Predicted Price", y = "Sold Price") +
   ggtitle("Predicted vs Sold Price")
+
+
+
+
+
+#Making a prediction
+
+# Define the new house parameters as a data frame
+new_house <- tibble(
+  sqft = 1248,
+  zip_code = 46819,
+  beds = 4,
+  full_baths = 1,
+  half_baths = 0,
+  year_built = 1949,
+  lot_sqft = 12196,
+  latitude = 41.0185,
+  longitude = -85.1678,
+  stories = 2,
+  hoa_fee = 0,
+  parking_garage = 1
+)
+
+# Preprocess the new house data using the prepared recipe
+new_house_processed <- prepared_recipe %>%
+  bake(new_data = new_house)
+
+# Make prediction
+new_house_prediction <- predict(house_workflow, new_data = new_house_processed)
+
+# Display the prediction
+print(new_house_prediction)
+
+
