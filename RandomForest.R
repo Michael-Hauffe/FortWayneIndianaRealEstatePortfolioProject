@@ -82,7 +82,7 @@ results <- results %>%
 # Find the biggest outlier and add back some original data for identification
 biggest_outliers <- results %>%
   arrange(desc(residual)) %>%
-  slice_head(n = 10) %>% left_join(unfiltereddata)
+  slice_head(n = 10) %>% left_join(unfiltereddata, by = c("latitude","longitude"))
 
 #Make a table of the biggest outliers for manual review
 view(biggest_outliers)
