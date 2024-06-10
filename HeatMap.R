@@ -26,7 +26,7 @@ data <- data %>%
     !is.na(sold_price)
   ) %>%
   select(
-    sqft, zip_code, beds, full_baths, half_baths, year_built, sold_price,
+    sqft, beds, full_baths, half_baths, year_built, sold_price,
     lot_sqft, price_per_sqft, latitude, longitude, stories, hoa_fee, parking_garage
   )
 

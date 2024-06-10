@@ -28,8 +28,6 @@ ggplot(correlation_df, aes(x = variable, y = correlation)) +
        x = "Variable", y = "Correlation") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-data_fullbaths <- data %>% filter(!is.na(full_baths)) %>% select(full_baths)
-print(paste("for every 1 full bath added to a property, the sold_price is expected to increase by",sd(clean_data$sold_price)*correlation_df$correlation["full_baths"]/sd(data_fullbaths$full_baths),"dollars"))
 
 # Calculate percent discount
 data <- data %>%
